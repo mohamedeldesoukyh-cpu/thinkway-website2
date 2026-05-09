@@ -57,3 +57,32 @@ body {
   border-color: rgba(139, 92, 246, 0.4);
   box-shadow: 0 0 24px rgba(139, 92, 246, 0.12);
 }
+
+/* ─── Perspective grid floor (hero) ─────────────────────────── */
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(139, 92, 246, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.12) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(500px) rotateX(58deg);
+  transform-origin: bottom center;
+  animation: grid-pan 12s linear infinite;
+}
+
+@keyframes grid-pan {
+  0%   { background-position: 0 0;    }
+  100% { background-position: 0 56px; }
+}
+
+/* ─── Shimmer (used on card skeletons) ──────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ─── Soft pulse glow ────────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+  50%       { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+}
+.glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }

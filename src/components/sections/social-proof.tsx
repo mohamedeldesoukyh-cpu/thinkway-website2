@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { fadeUp, scaleUp, stagger, viewport } from "@/lib/motion";
+import { CountUp } from "@/components/ui/count-up";
 
 const STATS = [
   { value: "50+",   label: "Brands worked with" },
@@ -64,7 +65,7 @@ export function SocialProof() {
               variants={scaleUp}
               className="flex flex-col items-center gap-1 rounded-2xl border border-white/[0.07] bg-[#1c1528] py-8 px-4 text-center"
             >
-              <span className="text-3xl font-bold gradient-text">{value}</span>
+              <CountUp value={value} className="text-3xl font-bold gradient-text" />
               <span className="text-xs text-[#94a3b8]">{label}</span>
             </motion.div>
           ))}

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { ease, fadeUp, stagger, viewport } from "@/lib/motion";
+import { ParticleField }    from "@/components/ui/particle-field";
+import { FloatingScreens }  from "@/components/ui/floating-screens";
 
 /* ── Typewriter hook ─────────────────────────────────────────── */
 const WORDS = [
@@ -81,6 +83,18 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
 
+      {/* ── Particle network (full-section canvas) ── */}
+      <ParticleField className="absolute inset-0 w-full h-full pointer-events-none" />
+
+      {/* ── Perspective grid floor ── */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[45%] overflow-hidden"
+        style={{ maskImage: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)" }}
+      >
+        <div className="hero-grid w-full h-full" />
+      </div>
+
       {/* ── Background orbs ── */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-60 -right-40  w-[600px] h-[600px] rounded-full bg-violet-600/20  blur-[120px]" />
@@ -88,6 +102,9 @@ export function Hero() {
         <div className="absolute bottom-0  -left-40 w-[500px] h-[400px] rounded-full bg-violet-900/30  blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-violet-950/40 blur-[140px]" />
       </div>
+
+      {/* ── 3D floating billboard / phone screens ── */}
+      <FloatingScreens />
 
       <motion.div
         className="relative z-10 w-full max-w-4xl mx-auto text-center flex flex-col items-center gap-6"
