@@ -124,7 +124,7 @@ export function FAQ() {
           className="text-center mt-10 text-sm text-[#64748b]"
         >
           Still have questions?{" "}
-          <a href="mailto:hello@thinkway.ai" className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors">
+          <a href="mailto:mohamedeldesouky.h@gmail.com" className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors">
             Drop us a line
           </a>
         </motion.p>

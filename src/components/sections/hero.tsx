@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Paperclip, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { ease, fadeUp, stagger, viewport } from "@/lib/motion";
 
 const SUGGESTIONS = [
@@ -12,17 +13,47 @@ const SUGGESTIONS = [
   "Deep-dive into databases",
 ];
 
+type Status = "idle" | "loading" | "success" | "error";
+
 export function Hero() {
+  const [email, setEmail]   = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [message, setMessage] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
+
+      setStatus("success");
+      setMessage("You're on the list! We'll be in touch soon.");
+      setEmail("");
+    } catch (err) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Something went wrong.");
+    }
+  }
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
       {/* ── Gradient orbs ── */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        {/* top-right cluster */}
         <div className="absolute -top-60 -right-40 w-[600px] h-[600px] rounded-full bg-violet-600/20 blur-[120px]" />
         <div className="absolute -top-40 -right-20 w-[400px] h-[400px] rounded-full bg-blue-500/15 blur-[80px]" />
-        {/* bottom-left accent */}
         <div className="absolute bottom-0 -left-40 w-[500px] h-[400px] rounded-full bg-violet-900/30 blur-[100px]" />
-        {/* centre ambient */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-violet-950/40 blur-[140px]" />
       </div>
 
@@ -62,62 +93,66 @@ export function Hero() {
           personalised curriculum in seconds — powered by AI, paced by you.
         </motion.p>
 
-        {/* CTAs */}
-        <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-3">
-          <motion.a
-            href="#pricing"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-6 py-2.5 text-sm font-semibold shadow-[0_0_24px_rgba(139,92,246,0.4)] hover:shadow-[0_0_32px_rgba(139,92,246,0.6)] transition-all"
-          >
-            Start learning free
-            <ArrowRight className="w-4 h-4" />
-          </motion.a>
-          <motion.a
-            href="#features"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 text-sm font-semibold transition-all"
-          >
-            See how it works
-          </motion.a>
-        </motion.div>
+        {/* Waitlist form */}
+        <motion.div variants={fadeUp} className="w-full max-w-md mt-2">
+          <AnimatePresence mode="wait">
+            {status === "success" ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-center gap-2.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-4"
+              >
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <p className="text-sm text-emerald-300 font-medium">{message}</p>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                onSubmit={handleSubmit}
+                className="flex flex-col sm:flex-row gap-2"
+              >
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="flex-1 rounded-xl border border-white/[0.07] bg-[#1c1528] px-4 py-3 text-sm text-white placeholder:text-[#475569] outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all"
+                />
+                <motion.button
+                  type="submit"
+                  disabled={status === "loading"}
+                  whileHover={{ scale: status === "loading" ? 1 : 1.04 }}
+                  whileTap={{ scale: status === "loading" ? 1 : 0.97 }}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white px-5 py-3 text-sm font-semibold shadow-[0_0_24px_rgba(139,92,246,0.4)] transition-all whitespace-nowrap"
+                >
+                  {status === "loading" ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      Join waitlist
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </motion.button>
+              </motion.form>
+            )}
+          </AnimatePresence>
 
-        {/* Prompt bar */}
-        <motion.div
-          variants={fadeUp}
-          className="w-full max-w-2xl mt-2"
-        >
-          <motion.div
-            whileHover={{ boxShadow: "0 0 0 1px rgba(139,92,246,0.5), 0 8px 32px rgba(139,92,246,0.15)" }}
-            transition={{ duration: 0.2, ease }}
-            className="flex items-center gap-1 rounded-2xl border border-white/[0.07] bg-[#1c1528] p-2 shadow-lg"
-          >
-            <button
-              aria-label="Attach file"
-              className="p-2 rounded-xl text-[#64748b] hover:text-[#94a3b8] hover:bg-white/5 transition-colors"
-            >
-              <Paperclip className="w-4 h-4" />
-            </button>
-            <button
-              aria-label="AI assist"
-              className="p-2 rounded-xl text-violet-400 hover:text-violet-300 hover:bg-white/5 transition-colors"
-            >
-              <Sparkles className="w-4 h-4" />
-            </button>
-            <input
-              type="text"
-              placeholder="What do you want to learn today?"
-              className="flex-1 bg-transparent text-sm text-[#94a3b8] placeholder:text-[#475569] outline-none px-2"
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-xl bg-violet-600 hover:bg-violet-500 text-white px-4 py-1.5 text-xs font-semibold transition-colors mr-1"
-            >
-              Generate path
-            </motion.button>
-          </motion.div>
+          {/* Error message */}
+          <AnimatePresence>
+            {status === "error" && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-2 text-xs text-red-400 text-center"
+              >
+                {message}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Suggestion pills */}
@@ -128,6 +163,8 @@ export function Hero() {
           {SUGGESTIONS.map((s) => (
             <motion.button
               key={s}
+              type="button"
+              onClick={() => setEmail("")}
               whileHover={{ scale: 1.04, backgroundColor: "rgba(255,255,255,0.08)" }}
               whileTap={{ scale: 0.97 }}
               className="rounded-full border border-white/[0.07] bg-[#1c1528] px-4 py-1.5 text-xs text-[#94a3b8] transition-colors"
@@ -148,7 +185,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.6, ease }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <motion.div
           animate={{ y: [0, 6, 0] }}
