@@ -5,23 +5,22 @@ import { ArrowRight, GitBranch, Globe, Sparkles } from "lucide-react";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
 
 const LINKS = {
-  Product: [
-    { label: "Features",   href: "#features"      },
-    { label: "Pricing",    href: "#pricing"        },
-    { label: "Changelog",  href: "#"               },
-    { label: "Roadmap",    href: "#"               },
+  Services: [
+    { label: "Influencer Marketing", href: "#services"     },
+    { label: "Social Out-of-Home",   href: "#sooh"         },
+    { label: "Strategy & Analytics", href: "#services"     },
+    { label: "Packages",             href: "#pricing"      },
   ],
   Company: [
-    { label: "About",      href: "#"               },
-    { label: "Blog",       href: "#"               },
-    { label: "Careers",    href: "#"               },
-    { label: "Press kit",  href: "#"               },
+    { label: "About us",  href: "#" },
+    { label: "Our work",  href: "#social-proof" },
+    { label: "Blog",      href: "#" },
+    { label: "Careers",   href: "#" },
   ],
   Legal: [
-    { label: "Privacy",    href: "#"               },
-    { label: "Terms",      href: "#"               },
-    { label: "Cookies",    href: "#"               },
-    { label: "Security",   href: "#"               },
+    { label: "Privacy", href: "#" },
+    { label: "Terms",   href: "#" },
+    { label: "Cookies", href: "#" },
   ],
 } as const;
 
@@ -31,7 +30,8 @@ export function Footer() {
       <div aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-violet-950/20 blur-[100px] rounded-full" />
 
       <div className="relative z-10 max-w-6xl mx-auto">
-        {/* CTA Banner */}
+
+        {/* CTA banner */}
         <motion.div
           variants={stagger(0.1)}
           initial="hidden"
@@ -40,20 +40,20 @@ export function Footer() {
           className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-600/10 to-[#1c1528] p-8 sm:p-12 text-center mb-16 flex flex-col items-center gap-6"
         >
           <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl font-bold">
-            Ready to learn{" "}
-            <span className="gradient-text">smarter?</span>
+            Ready to take your brand{" "}
+            <span className="gradient-text">everywhere?</span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#94a3b8] text-sm max-w-sm">
-            Join 10,000+ learners who use ThinkWay to master new skills faster than they thought possible.
+            Let&apos;s build a campaign that moves people — on every screen, in every city that matters to your audience.
           </motion.p>
           <motion.a
             variants={fadeUp}
-            href="#pricing"
+            href="mailto:mohamedeldesouky.h@gmail.com"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-6 py-2.5 text-sm font-semibold shadow-[0_0_24px_rgba(139,92,246,0.4)] transition-all"
           >
-            Start for free
+            Start a campaign
             <ArrowRight className="w-4 h-4" />
           </motion.a>
         </motion.div>
@@ -75,13 +75,13 @@ export function Footer() {
               <span className="font-bold text-white text-sm tracking-tight">ThinkWay</span>
             </a>
             <p className="text-xs text-[#64748b] leading-relaxed max-w-[180px]">
-              The AI learning platform that builds your personal curriculum.
+              Influencer marketing and Social Out-of-Home campaigns that move people.
             </p>
             <div className="flex gap-3 mt-1">
-              <a href="#" aria-label="X / Twitter" className="text-[#64748b] hover:text-white transition-colors">
+              <a href="#" aria-label="Website" className="text-[#64748b] hover:text-white transition-colors">
                 <Globe className="w-4 h-4" />
               </a>
-              <a href="#" aria-label="GitHub" className="text-[#64748b] hover:text-white transition-colors">
+              <a href="#" aria-label="Social" className="text-[#64748b] hover:text-white transition-colors">
                 <GitBranch className="w-4 h-4" />
               </a>
             </div>
@@ -102,8 +102,8 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/[0.06] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#475569]">
-          <p>© {new Date().getFullYear()} ThinkWay, Inc. All rights reserved.</p>
-          <p>Made with ♥ for curious minds everywhere.</p>
+          <p>© {new Date().getFullYear()} ThinkWay. All rights reserved.</p>
+          <p>Influencer Marketing · Social Out-of-Home · Built for bold brands.</p>
         </div>
       </div>
     </footer>

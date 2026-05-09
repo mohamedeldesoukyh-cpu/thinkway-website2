@@ -7,37 +7,34 @@ import { ease, fadeUp, stagger, viewport } from "@/lib/motion";
 
 const FAQS = [
   {
-    q: "What exactly is ThinkWay?",
-    a: "ThinkWay is an AI-powered learning platform that builds personalised, structured curricula for any topic you want to master. Instead of searching YouTube or drowning in Udemy courses, you describe your goal and ThinkWay creates a step-by-step path tailored to your level, schedule, and learning style.",
+    q: "What is Social Out-of-Home (SOOH)?",
+    a: "Social Out-of-Home bridges the gap between social media and physical advertising. We take your best-performing social content — a TikTok, an Instagram post, a creator's video — and display it on digital billboards, transit screens, and public displays in the real world. It amplifies your online campaign and drives massive earned media when audiences photograph and reshare what they see.",
   },
   {
-    q: "How does the AI create my learning path?",
-    a: "You tell us what you want to learn, your current level, your weekly time commitment, and your goal (e.g. 'get a job', 'build a side project', 'pass a certification'). Our model synthesises the optimal learning sequence, breaks it into weekly milestones, and sources the best free and paid resources for each step.",
+    q: "How do you find the right influencers for my brand?",
+    a: "We start with your brief: target audience, brand values, campaign goals. Our team then hand-picks creators from our vetted network of 200+ influencers — analysing audience demographics, engagement rates, and content authenticity, not just follower counts. You approve every creator before we proceed.",
   },
   {
-    q: "Is ThinkWay different from YouTube or Udemy?",
-    a: "Very different. YouTube and Udemy are content repositories — you still have to figure out what to watch and in what order. ThinkWay is a learning architect. It decides the sequence, tracks your progress, adapts when you fall behind, and tells you exactly what to do next.",
+    q: "Which platforms do you work with?",
+    a: "We run campaigns across TikTok, Instagram (Feed, Stories, Reels), YouTube, and X. For SOOH we have placements in 50+ cities across the Middle East, North Africa, and Europe — including digital billboards, mall screens, transit displays, and street-level panels.",
   },
   {
-    q: "Can I switch topics or start over?",
-    a: "Absolutely. You can pause any path, pivot to a new topic, or restart from a different entry point at any time. Your completed progress is always saved so you can resume exactly where you left off.",
+    q: "How long does a campaign take from brief to live?",
+    a: "Typically 2–3 weeks from signed brief to first content going live. This covers creator briefing and approval, content production, and platform scheduling. SOOH placements can be activated within 5–7 business days once creative is finalised.",
   },
   {
-    q: "Does it work on mobile?",
-    a: "Yes — ThinkWay has a fully responsive web app and native iOS/Android apps. You can check your daily tasks, mark lessons complete, and review your progress all from your phone.",
+    q: "Do you work with smaller or newer brands?",
+    a: "Yes. Our Starter package is designed for brands running their first influencer campaigns. We help you define your creator strategy, set realistic KPIs, and build the foundation for larger campaigns as you grow.",
   },
   {
-    q: "Can I cancel my subscription anytime?",
-    a: "Yes, with no questions asked. Cancel from your account settings and you keep access until the end of your billing period. We don't do dark patterns or cancellation loops.",
+    q: "What does success look like — how do you measure results?",
+    a: "We track reach, impressions, engagement rate, earned media value (EMV), click-through rates, and (where applicable) conversions. Every campaign ends with a full performance report. For SOOH we also report physical impressions based on footfall data from screen locations.",
   },
 ] as const;
 
 function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boolean; onToggle: () => void }) {
   return (
-    <motion.div
-      layout
-      className="rounded-xl border border-white/[0.07] bg-[#1c1528] overflow-hidden"
-    >
+    <motion.div layout className="rounded-xl border border-white/[0.07] bg-[#1c1528] overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-start justify-between gap-4 px-5 py-4 text-left"
@@ -76,7 +73,7 @@ export function FAQ() {
   return (
     <section id="faq" className="relative py-24 px-4">
       <div className="relative z-10 max-w-3xl mx-auto">
-        {/* Header */}
+
         <motion.div
           className="text-center mb-12"
           variants={stagger(0.1)}
@@ -88,14 +85,14 @@ export function FAQ() {
             FAQ
           </motion.p>
           <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold mb-4">
-            Questions, <span className="gradient-text">answered</span>
+            Questions,{" "}
+            <span className="gradient-text">answered</span>
           </motion.h2>
           <motion.p variants={fadeUp} className="text-[#94a3b8] text-base">
-            Everything you need to know before you start.
+            Everything you need to know before we start building your campaign.
           </motion.p>
         </motion.div>
 
-        {/* Items */}
         <motion.div
           className="flex flex-col gap-2"
           variants={stagger(0.08)}
@@ -115,7 +112,6 @@ export function FAQ() {
           ))}
         </motion.div>
 
-        {/* Bottom CTA */}
         <motion.p
           variants={fadeUp}
           initial="hidden"
@@ -124,7 +120,10 @@ export function FAQ() {
           className="text-center mt-10 text-sm text-[#64748b]"
         >
           Still have questions?{" "}
-          <a href="mailto:mohamedeldesouky.h@gmail.com" className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors">
+          <a
+            href="mailto:mohamedeldesouky.h@gmail.com"
+            className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors"
+          >
             Drop us a line
           </a>
         </motion.p>

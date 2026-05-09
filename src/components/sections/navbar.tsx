@@ -6,15 +6,16 @@ import { Menu, Sparkles, X } from "lucide-react";
 import { ease } from "@/lib/motion";
 
 const NAV_LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "Social Proof", href: "#social-proof" },
-  { label: "Pricing",  href: "#pricing"  },
-  { label: "FAQ",      href: "#faq"      },
+  { label: "Services",  href: "#services"     },
+  { label: "Work",      href: "#social-proof"  },
+  { label: "SOOH",      href: "#sooh"          },
+  { label: "Pricing",   href: "#pricing"       },
+  { label: "FAQ",       href: "#faq"           },
 ] as const;
 
 export function Navbar() {
-  const [scrolled, setScrolled]   = useState(false);
-  const [menuOpen, setMenuOpen]   = useState(false);
+  const [scrolled,  setScrolled]  = useState(false);
+  const [menuOpen,  setMenuOpen]  = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 24);
@@ -58,16 +59,13 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <a href="#pricing" className="text-sm text-[#94a3b8] hover:text-white transition-colors">
-            Log in
-          </a>
           <motion.a
-            href="#pricing"
+            href="mailto:mohamedeldesouky.h@gmail.com"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             className="bg-white text-black rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-gray-100 transition-colors"
           >
-            Get started free
+            Get a proposal
           </motion.a>
         </div>
 
@@ -104,11 +102,11 @@ export function Navbar() {
                 </a>
               ))}
               <a
-                href="#pricing"
+                href="mailto:mohamedeldesouky.h@gmail.com"
                 onClick={() => setMenuOpen(false)}
                 className="mt-3 bg-white text-black rounded-full px-4 py-2 text-sm font-semibold text-center"
               >
-                Get started free
+                Get a proposal
               </a>
             </nav>
           </motion.div>

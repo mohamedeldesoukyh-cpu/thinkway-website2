@@ -5,45 +5,43 @@ import { Star } from "lucide-react";
 import { fadeUp, scaleUp, stagger, viewport } from "@/lib/motion";
 
 const STATS = [
-  { value: "10,000+", label: "Active learners" },
-  { value: "500+",    label: "Topics covered"  },
-  { value: "4.9 / 5", label: "Average rating"  },
-  { value: "94%",     label: "Goal completion" },
+  { value: "50+",   label: "Brands worked with" },
+  { value: "200+",  label: "Creators in network" },
+  { value: "10M+",  label: "Campaign reach"      },
+  { value: "50+",   label: "Cities for SOOH"     },
 ] as const;
 
 const TESTIMONIALS = [
   {
-    name: "Sarah Chen",
-    role: "Software engineer @ Stripe",
-    initials: "SC",
+    name: "Layla Hassan",
+    role: "Head of Marketing @ NovaBrand",
+    initials: "LH",
     color: "from-violet-500 to-purple-600",
     stars: 5,
     quote:
-      "I went from zero to shipping a full-stack app in 6 weeks. ThinkWay's path kept me from drowning in random tutorials — everything was sequenced perfectly.",
+      "ThinkWay ran our biggest influencer campaign to date and then put our content on billboards across Dubai and Cairo. The brand awareness lift was unlike anything we'd done before.",
   },
   {
-    name: "Marcus Webb",
-    role: "Product manager → ML engineer",
-    initials: "MW",
+    name: "James Okafor",
+    role: "CMO @ Pulse Streetwear",
+    initials: "JO",
     color: "from-blue-500 to-cyan-500",
     stars: 5,
     quote:
-      "Making a career switch felt overwhelming until I found ThinkWay. The AI curriculum mapped exactly what I needed to learn to land my first ML role.",
+      "The SOOH side is what really blew us away. Seeing our Instagram content on a massive digital screen in a shopping mall — our customers went crazy sharing it. Incredible earned media.",
   },
   {
-    name: "Priya Nair",
-    role: "Indie hacker & founder",
-    initials: "PN",
+    name: "Sara Al-Mansoori",
+    role: "Brand Director @ Lumière",
+    initials: "SM",
     color: "from-emerald-500 to-teal-500",
     stars: 5,
     quote:
-      "I've tried Udemy, YouTube, bootcamps — nothing stuck. ThinkWay's adaptive scheduling means I actually finish what I start, even with a newborn at home.",
+      "They found us creators we'd never have discovered ourselves — genuinely aligned with our audience. The campaign felt authentic, not like an ad. Our engagement rates tripled.",
   },
 ] as const;
 
-const LOGOS = [
-  "Stripe", "Notion", "Linear", "Vercel", "Figma", "Supabase",
-] as const;
+const BRANDS = ["NovaBrand", "Pulse", "Lumière", "Orbit", "Helio", "Drift"] as const;
 
 export function SocialProof() {
   return (
@@ -52,7 +50,7 @@ export function SocialProof() {
 
       <div className="relative z-10 max-w-6xl mx-auto flex flex-col gap-20">
 
-        {/* ── Stats ── */}
+        {/* Stats */}
         <motion.div
           className="grid grid-cols-2 sm:grid-cols-4 gap-6"
           variants={stagger(0.1)}
@@ -72,7 +70,7 @@ export function SocialProof() {
           ))}
         </motion.div>
 
-        {/* ── Logo strip ── */}
+        {/* Brand strip */}
         <motion.div
           className="flex flex-col items-center gap-6"
           variants={stagger(0.08)}
@@ -81,10 +79,10 @@ export function SocialProof() {
           viewport={viewport}
         >
           <motion.p variants={fadeUp} className="text-xs text-[#64748b] uppercase tracking-widest">
-            Learners from teams at
+            Trusted by brands like
           </motion.p>
           <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-x-10 gap-y-4">
-            {LOGOS.map((name) => (
+            {BRANDS.map((name) => (
               <span key={name} className="text-[#475569] font-semibold text-sm hover:text-[#94a3b8] transition-colors cursor-default">
                 {name}
               </span>
@@ -92,7 +90,7 @@ export function SocialProof() {
           </motion.div>
         </motion.div>
 
-        {/* ── Testimonials ── */}
+        {/* Testimonials */}
         <div className="flex flex-col items-center gap-12">
           <motion.div
             className="text-center"
@@ -102,10 +100,11 @@ export function SocialProof() {
             viewport={viewport}
           >
             <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">
-              What learners say
+              Client stories
             </motion.p>
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold">
-              Loved by <span className="gradient-text">real people</span>
+              Brands that{" "}
+              <span className="gradient-text">think differently</span>
             </motion.h2>
           </motion.div>
 
@@ -124,17 +123,12 @@ export function SocialProof() {
                 transition={{ duration: 0.2 }}
                 className="flex flex-col gap-4 rounded-2xl border border-white/[0.07] bg-[#1c1528] p-6"
               >
-                {/* Stars */}
                 <div className="flex gap-0.5">
                   {Array.from({ length: stars }).map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-
-                {/* Quote */}
                 <p className="text-sm text-[#94a3b8] leading-relaxed flex-1">&ldquo;{quote}&rdquo;</p>
-
-                {/* Author */}
                 <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
                   <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-xs font-bold text-white shrink-0`}>
                     {initials}

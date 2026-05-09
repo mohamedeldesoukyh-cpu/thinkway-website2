@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ThinkWay — Learn smarter with AI",
+  title: "ThinkWay — Influencer Marketing & Social Out-of-Home",
   description:
-    "ThinkWay turns any topic into a personalised AI-powered learning journey.",
+    "ThinkWay delivers influencer marketing campaigns and Social Out-of-Home (SOOH) placements that take your brand from the feed to the street.",
 };
 
 export default function RootLayout({

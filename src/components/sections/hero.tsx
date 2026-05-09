@@ -1,45 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { ease, fadeUp, stagger, viewport } from "@/lib/motion";
 
-const SUGGESTIONS = [
-  "Master system design",
-  "Learn TypeScript in 30 days",
-  "Understand machine learning",
-  "Build a SaaS from scratch",
-  "Deep-dive into databases",
+/* ── Typewriter hook ─────────────────────────────────────────── */
+const WORDS = [
+  "Influencer Marketing",
+  "Social Out-of-Home",
+  "Creator Campaigns",
+  "Brand Storytelling",
+  "Cultural Moments",
 ];
 
+function useTypewriter(words: string[], typingSpeed = 75, deleteSpeed = 40, pauseMs = 2000) {
+  const [displayed, setDisplayed] = useState("");
+  const [wordIndex, setWordIndex]   = useState(0);
+  const [charIndex, setCharIndex]   = useState(0);
+  const [deleting,  setDeleting]    = useState(false);
+
+  useEffect(() => {
+    const current = words[wordIndex];
+
+    if (!deleting && charIndex === current.length) {
+      const t = setTimeout(() => setDeleting(true), pauseMs);
+      return () => clearTimeout(t);
+    }
+
+    if (deleting && charIndex === 0) {
+      setDeleting(false);
+      setWordIndex((i) => (i + 1) % words.length);
+      return;
+    }
+
+    const t = setTimeout(() => {
+      const next = deleting ? charIndex - 1 : charIndex + 1;
+      setCharIndex(next);
+      setDisplayed(current.slice(0, next));
+    }, deleting ? deleteSpeed : typingSpeed);
+
+    return () => clearTimeout(t);
+  }, [charIndex, deleting, wordIndex, words, typingSpeed, deleteSpeed, pauseMs]);
+
+  return displayed;
+}
+
+/* ── Types ───────────────────────────────────────────────────── */
 type Status = "idle" | "loading" | "success" | "error";
 
+/* ── Component ───────────────────────────────────────────────── */
 export function Hero() {
-  const [email, setEmail]   = useState("");
-  const [status, setStatus] = useState<Status>("idle");
+  const typed   = useTypewriter(WORDS);
+  const [email,   setEmail]   = useState("");
+  const [status,  setStatus]  = useState<Status>("idle");
   const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-
     setStatus("loading");
     setMessage("");
-
     try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
+      const res  = await fetch("/api/waitlist", {
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body:    JSON.stringify({ email }),
       });
-
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
-
       setStatus("success");
-      setMessage("You're on the list! We'll be in touch soon.");
+      setMessage("Got it! We'll be in touch with a proposal shortly.");
       setEmail("");
     } catch (err) {
       setStatus("error");
@@ -49,11 +80,12 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
-      {/* ── Gradient orbs ── */}
+
+      {/* ── Background orbs ── */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-60 -right-40 w-[600px] h-[600px] rounded-full bg-violet-600/20 blur-[120px]" />
-        <div className="absolute -top-40 -right-20 w-[400px] h-[400px] rounded-full bg-blue-500/15 blur-[80px]" />
-        <div className="absolute bottom-0 -left-40 w-[500px] h-[400px] rounded-full bg-violet-900/30 blur-[100px]" />
+        <div className="absolute -top-60 -right-40  w-[600px] h-[600px] rounded-full bg-violet-600/20  blur-[120px]" />
+        <div className="absolute -top-40 -right-20  w-[400px] h-[400px] rounded-full bg-blue-500/15    blur-[80px]"  />
+        <div className="absolute bottom-0  -left-40 w-[500px] h-[400px] rounded-full bg-violet-900/30  blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-violet-950/40 blur-[140px]" />
       </div>
 
@@ -71,17 +103,27 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
             </span>
-            AI-powered learning, reimagined
+            Influencer Marketing · Social Out-of-Home
           </span>
         </motion.div>
 
-        {/* Headline */}
+        {/* Headline with typewriter */}
         <motion.h1
           variants={fadeUp}
           className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.12] tracking-tight"
         >
-          The fastest way to{" "}
-          <span className="gradient-text">master anything</span>
+          We deliver{" "}
+          <br className="hidden sm:block" />
+          <span className="gradient-text inline-flex items-center min-h-[1.2em]">
+            {typed}
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ repeat: Infinity, duration: 0.9, ease: "linear" }}
+              className="ml-0.5 inline-block w-[3px] h-[0.85em] bg-violet-400 rounded-sm align-middle"
+            />
+          </span>
+          <br className="hidden sm:block" />
+          {" "}that moves people.
         </motion.h1>
 
         {/* Sub-headline */}
@@ -89,11 +131,33 @@ export function Hero() {
           variants={fadeUp}
           className="max-w-xl text-base sm:text-lg text-[#94a3b8] leading-relaxed"
         >
-          Describe what you want to learn and ThinkWay builds a structured,
-          personalised curriculum in seconds — powered by AI, paced by you.
+          ThinkWay connects brands with the right creators and takes campaigns
+          from the social feed to physical screens — in the streets, on
+          billboards, everywhere your audience lives.
         </motion.p>
 
-        {/* Waitlist form */}
+        {/* CTAs */}
+        <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-3">
+          <motion.a
+            href="mailto:mohamedeldesouky.h@gmail.com"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 rounded-full bg-violet-600 hover:bg-violet-500 text-white px-6 py-2.5 text-sm font-semibold shadow-[0_0_24px_rgba(139,92,246,0.4)] hover:shadow-[0_0_32px_rgba(139,92,246,0.6)] transition-all"
+          >
+            Start a campaign
+            <ArrowRight className="w-4 h-4" />
+          </motion.a>
+          <motion.a
+            href="#services"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 text-sm font-semibold transition-all"
+          >
+            See our work
+          </motion.a>
+        </motion.div>
+
+        {/* Lead capture */}
         <motion.div variants={fadeUp} className="w-full max-w-md mt-2">
           <AnimatePresence mode="wait">
             {status === "success" ? (
@@ -117,7 +181,7 @@ export function Hero() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
+                  placeholder="your@brand.com"
                   className="flex-1 rounded-xl border border-white/[0.07] bg-[#1c1528] px-4 py-3 text-sm text-white placeholder:text-[#475569] outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all"
                 />
                 <motion.button
@@ -130,17 +194,13 @@ export function Hero() {
                   {status === "loading" ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <>
-                      Join waitlist
-                      <ArrowRight className="w-4 h-4" />
-                    </>
+                    <>Get a proposal <ArrowRight className="w-4 h-4" /></>
                   )}
                 </motion.button>
               </motion.form>
             )}
           </AnimatePresence>
 
-          {/* Error message */}
           <AnimatePresence>
             {status === "error" && (
               <motion.p
@@ -155,36 +215,19 @@ export function Hero() {
           </AnimatePresence>
         </motion.div>
 
-        {/* Suggestion pills */}
-        <motion.div
-          variants={fadeUp}
-          className="flex flex-wrap justify-center gap-2"
-        >
-          {SUGGESTIONS.map((s) => (
-            <motion.button
-              key={s}
-              type="button"
-              onClick={() => setEmail("")}
-              whileHover={{ scale: 1.04, backgroundColor: "rgba(255,255,255,0.08)" }}
-              whileTap={{ scale: 0.97 }}
-              className="rounded-full border border-white/[0.07] bg-[#1c1528] px-4 py-1.5 text-xs text-[#94a3b8] transition-colors"
-            >
-              {s}
-            </motion.button>
-          ))}
+        {/* Trust badges */}
+        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-[#64748b]">
+          <span>✦ 50+ brands served</span>
+          <span>✦ 10M+ campaign reach</span>
+          <span>✦ 200+ creator network</span>
         </motion.div>
-
-        {/* Trust line */}
-        <motion.p variants={fadeUp} className="text-xs text-[#64748b]">
-          No credit card required · Free forever plan · Cancel anytime
-        </motion.p>
       </motion.div>
 
       {/* Scroll hint */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6, ease }}
+        transition={{ delay: 1.4, duration: 0.6, ease }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <motion.div
