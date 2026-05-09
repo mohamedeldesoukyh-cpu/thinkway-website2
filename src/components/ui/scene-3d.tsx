@@ -2,143 +2,141 @@
 
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Points, PointMaterial, Float, MeshDistortMaterial, Sphere } from "@react-three/drei";
+import { Points, PointMaterial, Float } from "@react-three/drei";
 import * as THREE from "three";
 
-/* ─── Particle galaxy ─────────────────────────────────────────── */
+const BRAND = "#1a6aff";
 
-function Galaxy() {
-  const ref = useRef<THREE.Points>(null);
+/* ─── Node network (dot + line — logo motif in 3D) ───────────── */
 
-  const [positions, colors] = useMemo(() => {
-    const count = 4000;
-    const pos = new Float32Array(count * 3);
-    const col = new Float32Array(count * 3);
+function Network() {
+  const groupRef = useRef<THREE.Group>(null);
+
+  const { nodePositions, lineGeo } = useMemo(() => {
+    const count = 90;
+    const nodePositions = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {
-      /* Spherical distribution with arm bias */
-      const r = Math.random() * 4 + 0.5;
+      const r = 1.8 + Math.random() * 2.6;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      const arm = Math.floor(Math.random() * 3) * ((Math.PI * 2) / 3);
-      const spread = 0.6;
-
-      pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta + arm + r * 0.4) + (Math.random() - 0.5) * spread;
-      pos[i * 3 + 1] = r * Math.cos(phi) * 0.25 + (Math.random() - 0.5) * 0.5;
-      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta + arm + r * 0.4) + (Math.random() - 0.5) * spread;
-
-      /* Violet → blue gradient by radius */
-      const t = r / 4.5;
-      col[i * 3]     = 0.54 - t * 0.16;   // R: violet to blue
-      col[i * 3 + 1] = 0.36 - t * 0.10;   // G
-      col[i * 3 + 2] = 0.96 + t * 0.03;   // B
+      nodePositions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      nodePositions[i * 3 + 1] = r * Math.cos(phi) * 0.6;
+      nodePositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
     }
-    return [pos, col];
+
+    /* Build edges between nearby nodes */
+    const threshold = 1.6;
+    const verts: number[] = [];
+    for (let i = 0; i < count; i++) {
+      for (let j = i + 1; j < count; j++) {
+        const dx = nodePositions[i * 3]     - nodePositions[j * 3];
+        const dy = nodePositions[i * 3 + 1] - nodePositions[j * 3 + 1];
+        const dz = nodePositions[i * 3 + 2] - nodePositions[j * 3 + 2];
+        if (Math.sqrt(dx * dx + dy * dy + dz * dz) < threshold) {
+          verts.push(
+            nodePositions[i * 3], nodePositions[i * 3 + 1], nodePositions[i * 3 + 2],
+            nodePositions[j * 3], nodePositions[j * 3 + 1], nodePositions[j * 3 + 2],
+          );
+        }
+      }
+    }
+
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verts), 3));
+    return { nodePositions, lineGeo };
   }, []);
 
   useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.y += delta * 0.04;
-      ref.current.rotation.x += delta * 0.008;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.05;
+      groupRef.current.rotation.x += delta * 0.012;
     }
   });
 
   return (
-    <Points ref={ref} positions={positions} colors={colors} stride={3}>
-      <PointMaterial
-        vertexColors
-        size={0.018}
-        sizeAttenuation
-        transparent
-        opacity={0.85}
-        depthWrite={false}
-      />
-    </Points>
-  );
-}
+    <group ref={groupRef}>
+      {/* Edges */}
+      <lineSegments geometry={lineGeo}>
+        <lineBasicMaterial color={BRAND} transparent opacity={0.10} />
+      </lineSegments>
 
-/* ─── Floating orbs ───────────────────────────────────────────── */
-
-function Orb({ position, scale, speed, distort }: {
-  position: [number, number, number];
-  scale: number;
-  speed: number;
-  distort: number;
-}) {
-  return (
-    <Float speed={speed} rotationIntensity={0.6} floatIntensity={1.4}>
-      <Sphere args={[1, 48, 48]} position={position} scale={scale}>
-        <MeshDistortMaterial
-          color="#8b5cf6"
-          emissive="#4c1d95"
-          emissiveIntensity={0.6}
-          distort={distort}
-          speed={2}
+      {/* Nodes */}
+      <Points positions={nodePositions}>
+        <PointMaterial
+          color={BRAND}
+          size={0.05}
+          sizeAttenuation
           transparent
-          opacity={0.18}
-          wireframe={false}
+          opacity={0.55}
+          depthWrite={false}
         />
-      </Sphere>
-    </Float>
+      </Points>
+    </group>
   );
 }
 
-/* ─── Crystalline shards ──────────────────────────────────────── */
+/* ─── Central wireframe form ──────────────────────────────────── */
 
-function Shard({ position, rotation, scale }: {
-  position: [number, number, number];
-  rotation: [number, number, number];
-  scale: [number, number, number];
-}) {
-  const ref = useRef<THREE.Mesh>(null);
+function CoreForm() {
+  const outer = useRef<THREE.Mesh>(null);
+  const inner = useRef<THREE.Mesh>(null);
 
   useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.x += delta * 0.12;
-      ref.current.rotation.z += delta * 0.08;
+    if (outer.current) {
+      outer.current.rotation.y += delta * 0.18;
+      outer.current.rotation.z += delta * 0.06;
+    }
+    if (inner.current) {
+      inner.current.rotation.y -= delta * 0.25;
+      inner.current.rotation.x += delta * 0.10;
     }
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.8}>
-      <mesh ref={ref} position={position} rotation={rotation} scale={scale}>
-        <octahedronGeometry args={[1, 0]} />
+    <Float speed={0.7} floatIntensity={0.4} rotationIntensity={0.1}>
+      <mesh ref={outer}>
+        <icosahedronGeometry args={[1.1, 1]} />
         <meshStandardMaterial
-          color="#60a5fa"
-          emissive="#1d4ed8"
-          emissiveIntensity={0.5}
-          transparent
-          opacity={0.22}
+          color={BRAND}
           wireframe
+          transparent
+          opacity={0.13}
+        />
+      </mesh>
+      <mesh ref={inner}>
+        <octahedronGeometry args={[0.6, 0]} />
+        <meshStandardMaterial
+          color={BRAND}
+          wireframe
+          transparent
+          opacity={0.20}
         />
       </mesh>
     </Float>
   );
 }
 
-/* ─── Inner ring ──────────────────────────────────────────────── */
+/* ─── Floating blue accent orbs ───────────────────────────────── */
 
-function Ring() {
-  const ref = useRef<THREE.Mesh>(null);
-
-  useFrame((_, delta) => {
-    if (ref.current) {
-      ref.current.rotation.x += delta * 0.06;
-      ref.current.rotation.z += delta * 0.03;
-    }
-  });
-
+function Orb({ position, scale, speed }: {
+  position: [number, number, number];
+  scale: number;
+  speed: number;
+}) {
   return (
-    <mesh ref={ref} rotation={[Math.PI / 2.5, 0, 0]}>
-      <torusGeometry args={[2.4, 0.008, 4, 120]} />
-      <meshStandardMaterial
-        color="#a78bfa"
-        emissive="#7c3aed"
-        emissiveIntensity={1}
-        transparent
-        opacity={0.35}
-      />
-    </mesh>
+    <Float speed={speed} floatIntensity={1.2} rotationIntensity={0.3}>
+      <mesh position={position} scale={scale}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial
+          color={BRAND}
+          emissive={BRAND}
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.07}
+        />
+      </mesh>
+    </Float>
   );
 }
 
@@ -147,31 +145,26 @@ function Ring() {
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.3} />
-      <pointLight position={[4, 4, 4]} intensity={2} color="#8b5cf6" />
-      <pointLight position={[-4, -2, -4]} intensity={1.5} color="#60a5fa" />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[5, 5, 5]}   intensity={1.2} color={BRAND} />
+      <pointLight position={[-5, -3, -5]} intensity={0.8} color="#0ea5e9" />
 
-      <Galaxy />
-      <Ring />
+      <Network />
+      <CoreForm />
 
-      <Orb position={[0, 0, 0]}   scale={1.8}  speed={1.2} distort={0.5} />
-      <Orb position={[3, 1, -2]}  scale={0.9}  speed={2.0} distort={0.4} />
-      <Orb position={[-3, -1, -1]} scale={0.7} speed={1.6} distort={0.6} />
-
-      <Shard position={[2.8, 1.5, -1]}  rotation={[0.4, 0.2, 0]}   scale={[0.28, 0.44, 0.28]} />
-      <Shard position={[-2.6, 1.0, -2]} rotation={[0.2, 0.8, 0.3]} scale={[0.22, 0.36, 0.22]} />
-      <Shard position={[1.5, -1.8, -1]} rotation={[0.6, 0.3, 0.1]} scale={[0.18, 0.30, 0.18]} />
-      <Shard position={[-1.8, 2.0, -3]} rotation={[0.1, 0.5, 0.4]} scale={[0.16, 0.26, 0.16]} />
+      <Orb position={[3.5,  1.0, -1]} scale={1.4} speed={1.0} />
+      <Orb position={[-3.0, 0.5, -2]} scale={1.0} speed={1.4} />
+      <Orb position={[0.5, -2.5, -1]} scale={0.8} speed={1.8} />
     </>
   );
 }
 
-/* ─── Exported canvas (used with dynamic import, ssr:false) ───── */
+/* ─── Exported canvas ─────────────────────────────────────────── */
 
 export function Scene3D() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 5.5], fov: 60 }}
+      camera={{ position: [0, 0, 7], fov: 55 }}
       gl={{ antialias: true, alpha: true }}
       dpr={[1, 1.5]}
       style={{ position: "absolute", inset: 0, pointerEvents: "none" }}

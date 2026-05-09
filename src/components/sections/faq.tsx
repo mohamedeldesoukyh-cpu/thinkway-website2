@@ -34,19 +34,19 @@ const FAQS = [
 
 function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boolean; onToggle: () => void }) {
   return (
-    <motion.div layout className="rounded-xl border border-white/[0.07] bg-[#1c1528] overflow-hidden">
+    <motion.div layout className="rounded-xl border border-black/[0.07] bg-white overflow-hidden shadow-sm">
       <button
         onClick={onToggle}
         className="w-full flex items-start justify-between gap-4 px-5 py-4 text-left"
         aria-expanded={isOpen}
       >
-        <span className="text-sm font-medium text-white leading-snug">{q}</span>
+        <span className="text-sm font-semibold text-[#080c20] leading-snug">{q}</span>
         <motion.span
           animate={{ rotate: isOpen ? 45 : 0 }}
           transition={{ duration: 0.25, ease }}
           className="shrink-0 mt-0.5"
         >
-          <Plus className="w-4 h-4 text-violet-400" />
+          <Plus className="w-4 h-4 text-[#1a6aff]" />
         </motion.span>
       </button>
 
@@ -59,7 +59,7 @@ function FAQItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpen: boo
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease }}
           >
-            <p className="px-5 pb-5 text-sm text-[#94a3b8] leading-relaxed">{a}</p>
+            <p className="px-5 pb-5 text-sm text-[#4b5568] leading-relaxed">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -71,7 +71,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="relative py-24 px-4">
+    <section id="faq" className="relative py-24 px-4 bg-[#f5f7ff]">
       <div className="relative z-10 max-w-3xl mx-auto">
 
         <motion.div
@@ -81,14 +81,14 @@ export function FAQ() {
           whileInView="show"
           viewport={viewport}
         >
-          <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-widest text-violet-400 mb-3">
+          <motion.p variants={fadeUp} className="text-xs font-semibold uppercase tracking-widest text-[#1a6aff] mb-3">
             FAQ
           </motion.p>
-          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold mb-4">
+          <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold mb-4 text-[#080c20]">
             Questions,{" "}
             <span className="gradient-text">answered</span>
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-[#94a3b8] text-base">
+          <motion.p variants={fadeUp} className="text-[#4b5568] text-base">
             Everything you need to know before we start building your campaign.
           </motion.p>
         </motion.div>
@@ -117,12 +117,12 @@ export function FAQ() {
           initial="hidden"
           whileInView="show"
           viewport={viewport}
-          className="text-center mt-10 text-sm text-[#64748b]"
+          className="text-center mt-10 text-sm text-[#6b7280]"
         >
           Still have questions?{" "}
           <a
             href="mailto:mohamedeldesouky.h@gmail.com"
-            className="text-violet-400 hover:text-violet-300 underline underline-offset-2 transition-colors"
+            className="text-[#1a6aff] hover:text-[#1252cc] underline underline-offset-2 transition-colors font-medium"
           >
             Drop us a line
           </a>
