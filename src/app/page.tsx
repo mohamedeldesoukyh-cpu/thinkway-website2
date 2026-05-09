@@ -4,6 +4,7 @@ import { Features }    from "@/components/sections/features";
 import { SocialProof } from "@/components/sections/social-proof";
 import { Pricing }     from "@/components/sections/pricing";
 import { FAQ }         from "@/components/sections/faq";
+import { Contact }     from "@/components/sections/contact";
 import { Footer }      from "@/components/sections/footer";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <SocialProof />
         <Pricing />
         <FAQ />
+        <Contact />
       </main>
       <Footer />
     </>
